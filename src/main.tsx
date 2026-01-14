@@ -4,8 +4,8 @@ import {createRoot} from 'react-dom/client'
 import {Provider} from 'react-redux';
 
 import './index.css'
-import App from './App.tsx'
-import {store} from './app/store.ts';
+import App from './App'
+import {store} from './app/store';
 import {BrowserRouter, Route, Routes} from "react-router";
 
 // Create a client
@@ -19,8 +19,8 @@ createRoot(document.getElementById('root')!).render(
                     <Routes>
                         <Route path="/" element={<App />} />
                     </Routes>
-                </BrowserRouter>,
+                </BrowserRouter>
             </QueryClientProvider>
         </Provider>
-    </StrictMode>,
+    </StrictMode>
 )
