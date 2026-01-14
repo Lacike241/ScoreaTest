@@ -1,11 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit'
 
 import CustomerReducer from 'src/customer/customerSlice'
-import DefaultSliceReducer from './defaultSlice'
 
 export const store = configureStore({
     reducer: {
-        app: DefaultSliceReducer,
         customer: CustomerReducer
     },
 })

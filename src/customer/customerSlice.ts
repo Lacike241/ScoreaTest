@@ -23,7 +23,7 @@ export const customerSlice = createSlice({
     },
 })
 
-// Action creators are generated for each case reducer function
+
 export const { setCalculatedGroups, setActualPage } = customerSlice.actions
 
 export default customerSlice.reducer

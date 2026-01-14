@@ -8,7 +8,6 @@ import App from './App'
 import {store} from './app/store';
 import {BrowserRouter, Route, Routes} from "react-router";
 
-// Create a client
 const queryClient = new QueryClient()
 
 createRoot(document.getElementById('root')!).render(
