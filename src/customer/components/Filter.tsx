@@ -1,22 +1,37 @@
 import React from "react";
 
-import {FilterItem} from "./FilterItem";
+import {FilterItems} from "src/customer/components/FilterItems.tsx";
+import type {CalculatedGroups, GroupItem} from "src/types/customerTypes.ts";
 
 interface Props {
-    filters: string[]
+    filters: CalculatedGroups
+    currentGroupFilter: GroupItem
     onPressFilter: (value: string) => void
+    filter: string[] | undefined
+    lvl: number
 }
 
-const FilterComponent: React.FC<Props> = ({filters, onPressFilter}) => {
+const FilterComponent: React.FC<Props> = ({currentGroupFilter, filters, onPressFilter, filter, lvl}) => {
+
+    const handlePressReset = () => {
+        onPressFilter('')
+    }
 
     return (
         <div>
-            <h4>Filter</h4>
+            <button onClick={handlePressReset}>
+                {'Reset filter'}
+            </button>
             <div className="filter">
-                {filters.map((item) => (
-                    <FilterItem key={item} onPressFilter={onPressFilter} value={item}/>
-                ))}
-                <FilterItem key={'others'} onPressFilter={onPressFilter} value={''} label={'Others'}/>
+                {filter && (
+                    <FilterItems
+                        currentGroupFilter={currentGroupFilter}
+                        filter={filter}
+                        filters={filters}
+                        onPressFilter={onPressFilter}
+                        lvl={lvl}
+                    />
+                )}
             </div>
         </div>
     )

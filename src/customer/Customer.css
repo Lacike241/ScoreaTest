@@ -7,6 +7,7 @@
 
 .filter-value {
   padding-bottom: 1em;
+  text-align: left;
 }
 
 .filter-value:hover {
@@ -32,7 +33,7 @@
 .row-item{
   text-align: left;
   border-left: 1px solid #ddd;
-  padding: 8px 4px;
+  padding: 4px 2px;
 }
 
 .header {
@@ -57,4 +58,26 @@
 .pagination-page {
   display: flex;
   align-items: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+}
+
+.active-filter{
+  text-align: left;
+  background-color: #a4e1a4;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.nested-filter{
+  text-align: left;
+  margin-left: 10px;
+}
+.filter-wrapper{
+  text-align: left;
+  margin-top: 2px;
+  margin-bottom: 2px;
 }

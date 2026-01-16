@@ -11,3 +11,18 @@ export interface Data {
         '@rowCount'?: string
     }
 }
+
+export interface KeyValueData {
+    key: string
+    value: number
+}
+
+export type ChildData = Record<string, KeyValueData[]>
+
+export interface GroupItem {
+    child: ChildData
+    others: KeyValueData[]
+    top: KeyValueData[]
+}
+
+export type CalculatedGroups = Record<string, GroupItem>

@@ -1,12 +1,14 @@
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
 
+import type {CalculatedGroups} from "src/types/customerTypes.ts";
+
 export interface CustomerState {
-    calculatedGroups: string[]
+    calculatedGroups: CalculatedGroups
     actualPage: number
 }
 
 const initialState: CustomerState = {
-    calculatedGroups: [],
+    calculatedGroups: {},
     actualPage: 1
 }
 
@@ -14,7 +16,7 @@ export const customerSlice = createSlice({
     name: 'customer',
     initialState,
     reducers: {
-        setCalculatedGroups: (state, action: PayloadAction<string[]>) => {
+        setCalculatedGroups: (state, action: PayloadAction<CalculatedGroups>) => {
             state.calculatedGroups = action.payload
         },
         setActualPage: (state, action: PayloadAction<number>)=>{
