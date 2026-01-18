@@ -31,7 +31,7 @@ export const fetchCustomerCount = async (filterUrl?: string | null): Promise<num
 
 // fetch customerPostCodes
 export const fetchCustomerPostcodes = async (limit: number): Promise<Customer[]> => {
-    const res = await fetch(`${DEFAULT_URL}.json?detail=custom:psc&limit=${limit}`);
+    const res = await fetch(`${DEFAULT_URL}/(psc%20begins%20'1').json?detail=custom:psc&limit=${limit}`);
     if (!res.ok) throw new Error("Failed to fetch post codes");
     const data: Data = await res.json();
     let result: Customer[] = []
@@ -39,4 +39,20 @@ export const fetchCustomerPostcodes = async (limit: number): Promise<Customer[]>
         result = data.winstrom.adresar
     }
     return result
+};
+
+
+export const fetchAllCustomers = async (limit: number): Promise<Customer[]> => {
+    const res = await fetch(`${DEFAULT_URL}.json?detail=custom:psc,nazev,kod&limit=${limit}`);
+    if (!res.ok) throw new Error("Failed to fetch customers");
+    const data: Data = await res.json();
+    // normalize psc data
+    let resultData = data?.winstrom?.adresar ?? []
+    if(resultData.length > 0){
+        resultData = resultData?.map(r => ({
+            ...r,
+            psc: r.psc.replace(/\s+/g, ''),
+        }))
+    }
+    return resultData
 };
