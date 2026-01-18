@@ -31,7 +31,7 @@ export const fetchCustomerCount = async (filterUrl?: string | null): Promise<num
 
 // fetch customerPostCodes
 export const fetchCustomerPostcodes = async (limit: number): Promise<Customer[]> => {
-    const res = await fetch(`${DEFAULT_URL}/(psc%20begins%20'1').json?detail=custom:psc&limit=${limit}`);
+    const res = await fetch(`${DEFAULT_URL}.json?detail=custom:psc&limit=${limit}`);
     if (!res.ok) throw new Error("Failed to fetch post codes");
     const data: Data = await res.json();
     let result: Customer[] = []
