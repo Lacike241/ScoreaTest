@@ -23,14 +23,14 @@ export const CustomerPage = () => {
 
     const {data, isLoading} = useQuery<Customer[]>({
         queryKey: ["allCustomers"],
-        queryFn: () => fetchAllCustomers(0),
+        queryFn: () => fetchAllCustomers(150),
     });
 
     const handleChangePage = useCallback((value: number) => {
         dispatch(setActualPage(value))
     }, [dispatch])
 
-    const filteRs = useAppSelector(state => state.customer.calculatedGroups)
+    const calculatedGroups = useAppSelector(state => state.customer.calculatedGroups)
 
     const lastFilterValue = useMemo(() => {
         let result
@@ -52,18 +52,18 @@ export const CustomerPage = () => {
         );
     }
 
-    const getCustomData = useCallback((data: Customer[], filteRs: CalculatedGroups, filter: string) => {
+    const getOthersData = useCallback((data: Customer[], calculatedGroups: CalculatedGroups, filter: string) => {
         let result = data
         if (data && filter) {
             const filterValues = filter.split('/')
             if (filterValues.length >= 2) {
                 const fV = filterValues[filterValues.length - 2]
-                if (filteRs[fV]) {
-                    const notStartWith = filteRs[fV]?.top.map((item) => item.key)
+                if (calculatedGroups[fV]) {
+                    const notStartWith = calculatedGroups[fV]?.top.map((item) => item.key)
                     result = data.filter((item) => startsWithButNot(item.psc, fV, notStartWith))
                 }
             } else {
-                const notStartWith = filteRs.root?.top.map((item) => item.key)
+                const notStartWith = calculatedGroups.root?.top.map((item) => item.key)
                 result = data.filter((item) => startsWithButNot(item.psc, '', notStartWith))
             }
         }
@@ -77,7 +77,7 @@ export const CustomerPage = () => {
         if (filter && filter.length > 0 && lastFilterValue && data) {
 
             if (lastFilterValue === 'others') {
-                const othersData = getCustomData(data, filteRs, filter)
+                const othersData = getOthersData(data, calculatedGroups, filter)
                 result = othersData
                 count = othersData.length
             } else {
@@ -97,7 +97,7 @@ export const CustomerPage = () => {
             data: result,
             currentPageCount: count
         }
-    }, [data, currentPage, pageSize, filter, filteRs, lastFilterValue, getCustomData])
+    }, [data, currentPage, pageSize, filter, calculatedGroups, lastFilterValue, getOthersData])
 
     function getRootCalculatedGroups(items: Customer[]): CalculatedGroups['root'] {
         if (!items?.length) return {
@@ -128,7 +128,7 @@ export const CustomerPage = () => {
     }
 
     useEffect(() => {
-        // load root Filters
+        // load root calculatedGroups
         if (data) {
             const root = getRootCalculatedGroups(data)
             dispatch(setRoot(root))
@@ -136,26 +136,26 @@ export const CustomerPage = () => {
     }, [data, dispatch]);
 
     useEffect(() => {
-        // load Filters by filter
+        // load calculatedGroups by filter
         const filterValues = filter?.split('/')
         if (filterValues && filterValues.length > 0) {
             filterValues.forEach((fItem, idx) => {
                 let isFilterInTop = false
-                if (filteRs && !filteRs[fItem] && fItem !== 'others') {
-                    let topData = filteRs.root
+                if (calculatedGroups && !calculatedGroups[fItem] && fItem !== 'others') {
+                    let groupItemData = calculatedGroups.root
                     const prevFilterValue = filterValues[idx - 1]
-                    if (prevFilterValue && filteRs && filteRs[prevFilterValue] && idx > 0) {
-                        topData = filteRs[prevFilterValue]
+                    if (prevFilterValue && calculatedGroups && calculatedGroups[prevFilterValue] && idx > 0) {
+                        groupItemData = calculatedGroups[prevFilterValue]
                     }
-                    if (topData) {
+                    if (groupItemData) {
                         if (fItem) {
-                            const findIndex = topData.top.findIndex((item) => item.key === fItem)
+                            const findIndex = groupItemData.top.findIndex((item) => item.key === fItem)
                             if (findIndex >= 0) {
                                 isFilterInTop = true
                             }
                         }
                         if (isFilterInTop) {
-                            const dataForFv = getRooTop(topData.child[fItem], 5)
+                            const dataForFv = getRooTop(groupItemData.child[fItem], 5)
                             dispatch(setChild({
                                 data: dataForFv,
                                 name: fItem
@@ -165,7 +165,7 @@ export const CustomerPage = () => {
                 }
             })
         }
-    }, [filter, filteRs, dispatch]);
+    }, [filter, calculatedGroups, dispatch]);
 
     const handlePressFilter = useCallback((value: string) => {
         setSearchParams({filter: value})
@@ -176,11 +176,11 @@ export const CustomerPage = () => {
         <>
             <h1>ScoreaTest </h1>
             <div className={'content'}>
-                {filteRs &&
+                {calculatedGroups &&
                     <Filter
                         onPressFilter={handlePressFilter}
-                        filters={filteRs}
-                        currentGroupFilter={filteRs.root}
+                        filters={calculatedGroups}
+                        currentGroupFilter={calculatedGroups.root}
                         filter={filter?.split('/')}
                         lvl={0}
                     />
