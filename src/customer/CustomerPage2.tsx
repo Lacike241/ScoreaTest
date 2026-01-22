@@ -23,7 +23,7 @@ export const CustomerPage = () => {
 
     const {data, isLoading} = useQuery<Customer[]>({
         queryKey: ["allCustomers"],
-        queryFn: () => fetchAllCustomers(150),
+        queryFn: () => fetchAllCustomers(0),
     });
 
     const handleChangePage = useCallback((value: number) => {
