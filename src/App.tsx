@@ -1,4 +1,4 @@
-import {CustomerPage} from "./customer/CustomerPage";
+import {CustomerPage} from "./customer/CustomerPage2";
 import './App.css'
 
 function App() {

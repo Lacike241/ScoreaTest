@@ -1,6 +1,6 @@
 import type {CalculatedGroups, ChildData, Customer, GroupItem, KeyValueData} from "src/types/customerTypes";
 
-export function getRooTop(data: KeyValueData[], count: number) {
+export function getTopData(data: KeyValueData[], count: number) {
     if (data) {
         const top = data.slice(0, count - 1)
         const child: ChildData = {}
@@ -63,7 +63,7 @@ export function getCalculatedGroups(items: Customer[], filter: string | null): C
         .sort((a, b) => b[1] - a[1])
         .map(([key, value]) => ({key, value}));
 
-    const rootResult = getRooTop(sortedArray, 5)
+    const rootResult = getTopData(sortedArray, 5)
     let nestedResult: CalculatedGroups = {}
 
     filterValues?.forEach((fItem, idx) => {
@@ -84,13 +84,13 @@ export function getCalculatedGroups(items: Customer[], filter: string | null): C
         if (isFilterInTop) {
             nestedResult = {
                 ...nestedResult,
-                [fItem]: getRooTop(topData.child[fItem], 5)
+                [fItem]: getTopData(topData.child[fItem], 5)
             }
         } else {
             // čo ak sa nenachádza v TOP?
             // nestedResult = {
             //     ...nestedResult,
-            //     // [fItem]: getRooTop(rootResult.others, 5)
+            //     // [fItem]: getTopData(rootResult.others, 5)
             // }
         }
     })

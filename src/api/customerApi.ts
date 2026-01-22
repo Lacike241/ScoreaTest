@@ -40,3 +40,19 @@ export const fetchCustomerPostcodes = async (limit: number): Promise<Customer[]>
     }
     return result
 };
+
+
+export const fetchAllCustomers = async (limit: number): Promise<Customer[]> => {
+    const res = await fetch(`${DEFAULT_URL}.json?detail=custom:psc,nazev,kod&limit=${limit}`);
+    if (!res.ok) throw new Error("Failed to fetch customers");
+    const data: Data = await res.json();
+    // normalize psc data
+    let resultData = data?.winstrom?.adresar ?? []
+    if(resultData.length > 0){
+        resultData = resultData?.map(r => ({
+            ...r,
+            psc: r.psc.replace(/\s+/g, ''),
+        }))
+    }
+    return resultData
+};
