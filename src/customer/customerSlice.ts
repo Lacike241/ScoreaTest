@@ -33,10 +33,15 @@ export const customerSlice = createSlice({
         setChild: (state, action: PayloadAction<ChildPayload>)=>{
             state.calculatedGroups[action.payload.name] = action.payload.data
         },
+        resetChild: (state)=>{
+            state.calculatedGroups = {
+                root: state.calculatedGroups.root ?? {}
+            }
+        },
     },
 })
 
 
-export const { setCalculatedGroups, setActualPage, setRoot, setChild } = customerSlice.actions
+export const { setCalculatedGroups, setActualPage, setRoot, setChild, resetChild } = customerSlice.actions
 
 export default customerSlice.reducer

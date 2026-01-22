@@ -7,14 +7,15 @@ interface Props {
     filters: CalculatedGroups
     currentGroupFilter: GroupItem
     onPressFilter: (value: string) => void
+    onPressResetFilter: () => void
     filter: string[] | undefined
     lvl: number
 }
 
-const FilterComponent: React.FC<Props> = ({currentGroupFilter, filters, onPressFilter, filter, lvl}) => {
+const FilterComponent: React.FC<Props> = ({currentGroupFilter, filters, onPressFilter, onPressResetFilter, filter, lvl}) => {
 
     const handlePressReset = () => {
-        onPressFilter('')
+        onPressResetFilter()
     }
 
     return (

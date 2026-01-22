@@ -9,10 +9,10 @@ import type {CalculatedGroups, Customer} from "src/types/customerTypes.ts";
 import {fetchAllCustomers} from "src/api/customerApi.ts";
 import {Table} from "src/customer/components/Table.tsx";
 import {useCallback, useEffect, useMemo} from "react";
-import {setActualPage, setChild, setRoot} from "src/customer/customerSlice.ts";
-import {getRooTop} from "src/helpers/customerHelper.ts";
+import {resetChild, setActualPage, setChild, setRoot} from "src/customer/customerSlice.ts";
+import {getTopData} from "src/helpers/customerHelper.ts";
+import {getOthersDataByFilter, getPaginatedData, getRootCalculatedGroups} from "src/helpers/customerHelper2.ts";
 import {Filter} from "src/customer/components/Filter.tsx";
-
 
 export const CustomerPage = () => {
     const dispatch = useAppDispatch()
@@ -41,35 +41,13 @@ export const CustomerPage = () => {
         return result
     }, [filter])
 
-    function startsWithButNot(value: string, requiredPrefix: string, forbiddenPrefixes: string[] = []) {
-        const str = value;
-
-        return (
-            str.startsWith(requiredPrefix) &&
-            !forbiddenPrefixes.some(p =>
-                str.startsWith(p)
-            )
-        );
-    }
-
     const getOthersData = useCallback((data: Customer[], calculatedGroups: CalculatedGroups, filter: string) => {
         let result = data
         if (data && filter) {
-            const filterValues = filter.split('/')
-            if (filterValues.length >= 2) {
-                const fV = filterValues[filterValues.length - 2]
-                if (calculatedGroups[fV]) {
-                    const notStartWith = calculatedGroups[fV]?.top.map((item) => item.key)
-                    result = data.filter((item) => startsWithButNot(item.psc, fV, notStartWith))
-                }
-            } else {
-                const notStartWith = calculatedGroups.root?.top.map((item) => item.key)
-                result = data.filter((item) => startsWithButNot(item.psc, '', notStartWith))
-            }
+            result = getOthersDataByFilter(data, calculatedGroups, filter)
         }
         return result
     }, [])
-
 
     const filteredData = useMemo(() => {
         let result: Customer[] = data ?? []
@@ -88,9 +66,7 @@ export const CustomerPage = () => {
         }
         // slice by pagination
         if (result) {
-            const start = pageSize * (currentPage - 1)
-            const end = (pageSize * currentPage) - 1
-            result = result.slice(start, end)
+            result = getPaginatedData(result, pageSize, currentPage)
         }
 
         return {
@@ -98,34 +74,6 @@ export const CustomerPage = () => {
             currentPageCount: count
         }
     }, [data, currentPage, pageSize, filter, calculatedGroups, lastFilterValue, getOthersData])
-
-    function getRootCalculatedGroups(items: Customer[]): CalculatedGroups['root'] {
-        if (!items?.length) return {
-            child: {},
-            top: [],
-            others: []
-        };
-        // default PSG length to 10
-        const length = 10;
-        let allGroup = {};
-        for (let prefixLen = 1; prefixLen < length; prefixLen++) {
-            const currentGroup: Record<string, number> = {};
-            for (const item of items) {
-                const psc = item.psc;
-                const itemPrefixLen = Math.min(psc.length, prefixLen)
-                const prefix = psc.slice(0, itemPrefixLen - 1);
-                currentGroup[prefix] ??= 0;
-                currentGroup[prefix]++;
-            }
-            allGroup = allGroup ? {...allGroup, ...currentGroup} : currentGroup
-        }
-
-        const sortedArray = Object.entries<number>(allGroup)
-            .sort((a, b) => b[1] - a[1])
-            .map(([key, value]) => ({key, value}));
-
-        return getRooTop(sortedArray, 5)
-    }
 
     useEffect(() => {
         // load root calculatedGroups
@@ -155,7 +103,7 @@ export const CustomerPage = () => {
                             }
                         }
                         if (isFilterInTop) {
-                            const dataForFv = getRooTop(groupItemData.child[fItem], 5)
+                            const dataForFv = getTopData(groupItemData.child[fItem], 5)
                             dispatch(setChild({
                                 data: dataForFv,
                                 name: fItem
@@ -167,10 +115,19 @@ export const CustomerPage = () => {
         }
     }, [filter, calculatedGroups, dispatch]);
 
-    const handlePressFilter = useCallback((value: string) => {
-        setSearchParams({filter: value})
+    const setFilterAndActualPage = useCallback((filter: string)=>{
+        setSearchParams({filter})
         dispatch(setActualPage(1))
-    }, [setSearchParams, dispatch])
+    }, [dispatch, setSearchParams])
+
+    const handlePressFilter = useCallback((value: string) => {
+        setFilterAndActualPage(value)
+    }, [setFilterAndActualPage])
+
+    const handlePressResetFilter = useCallback(()=>{
+        setFilterAndActualPage('')
+        dispatch(resetChild())
+    }, [dispatch, setFilterAndActualPage])
 
     return (
         <>
@@ -179,6 +136,7 @@ export const CustomerPage = () => {
                 {calculatedGroups &&
                     <Filter
                         onPressFilter={handlePressFilter}
+                        onPressResetFilter={handlePressResetFilter}
                         filters={calculatedGroups}
                         currentGroupFilter={calculatedGroups.root}
                         filter={filter?.split('/')}
