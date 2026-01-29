@@ -1,6 +1,7 @@
 import React from "react";
 
-import type {CalculatedGroups, GroupItem} from "src/types/customerTypes.ts";
+import {sumUniqueValuesByPrefix} from "src/helpers/customerHelper";
+import type {CalculatedGroups, GroupItem} from "src/types/customerTypes";
 import {FilterItem} from "./FilterItem";
 
 interface Props {
@@ -10,9 +11,19 @@ interface Props {
     filter: string[]
     lvl: number
     prevKey?: string
+    allCustomerCount?: number
 }
 
-const FilterItemsComponent: React.FC<Props> = ({currentGroupFilter, filters, onPressFilter, filter, lvl, prevKey}) => {
+const FilterItemsComponent: React.FC<Props> = (
+    {
+        allCustomerCount,
+        currentGroupFilter,
+        filters,
+        onPressFilter,
+        filter,
+        lvl,
+        prevKey
+    }) => {
 
     return (<div className={lvl > 0 ? 'nested-filter' : ''}>
             {currentGroupFilter && currentGroupFilter?.top?.map((item) => (
@@ -20,7 +31,7 @@ const FilterItemsComponent: React.FC<Props> = ({currentGroupFilter, filters, onP
                     <FilterItem
                         isActive={filter[lvl] === item.key}
                         onPressFilter={onPressFilter}
-                        value={`${prevKey ? prevKey + '/' : ''}${item.key}`} label={item.key}
+                        value={`${prevKey ? prevKey + '/' : ''}${item.key}`} label={`${item.key} (${item.value})`}
                     />
                     {filter[lvl] === item.key ? (
                         <FilterItems
@@ -39,7 +50,7 @@ const FilterItemsComponent: React.FC<Props> = ({currentGroupFilter, filters, onP
                     key={`${prevKey}-others`}
                     onPressFilter={onPressFilter}
                     value={`${prevKey ? prevKey + '/' : ''}others`}
-                    label={'Others'}
+                    label={`Others (${sumUniqueValuesByPrefix(currentGroupFilter?.others, currentGroupFilter?.top, lvl === 0 ? allCustomerCount : undefined)})`}
                     isActive={filter[lvl] === 'others'}
                 />
             }

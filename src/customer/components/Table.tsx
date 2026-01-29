@@ -15,12 +15,12 @@ interface Props {
 export const Table: React.FC<Props> = ({data, totalLength, onChangePage, actualPage}) => {
 
     return (
-        <div className="container">
+        <>
             <TableHeader />
             {data.map((item) => (
                 <TableRow psc={item.psc} id={item.id} nazev={item.nazev} key={item.id} />
             ))}
             <TablePagination totalLength={totalLength} actualPage={actualPage} onChangePage={onChangePage} />
-        </div>
+        </>
     );
 }

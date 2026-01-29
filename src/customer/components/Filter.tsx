@@ -4,6 +4,7 @@ import {FilterItems} from "src/customer/components/FilterItems.tsx";
 import type {CalculatedGroups, GroupItem} from "src/types/customerTypes.ts";
 
 interface Props {
+    allCustomerCount?   : number
     filters: CalculatedGroups
     currentGroupFilter: GroupItem
     onPressFilter: (value: string) => void
@@ -11,7 +12,7 @@ interface Props {
     lvl: number
 }
 
-const FilterComponent: React.FC<Props> = ({currentGroupFilter, filters, onPressFilter, filter, lvl}) => {
+const FilterComponent: React.FC<Props> = ({allCustomerCount, currentGroupFilter, filters, onPressFilter, filter, lvl}) => {
 
     const handlePressReset = () => {
         onPressFilter('')
@@ -19,7 +20,7 @@ const FilterComponent: React.FC<Props> = ({currentGroupFilter, filters, onPressF
 
     return (
         <div>
-            <button onClick={handlePressReset}>
+            <button onClick={handlePressReset} className={'reset-button'}>
                 {'Reset filter'}
             </button>
             <div className="filter">
@@ -30,6 +31,7 @@ const FilterComponent: React.FC<Props> = ({currentGroupFilter, filters, onPressF
                         filters={filters}
                         onPressFilter={onPressFilter}
                         lvl={lvl}
+                        allCustomerCount={allCustomerCount}
                     />
                 )}
             </div>
