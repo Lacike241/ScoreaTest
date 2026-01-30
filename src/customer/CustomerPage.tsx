@@ -9,7 +9,7 @@ import {getChildForTop, getDataForRoot, getFilterUrlFromTopData} from "src/helpe
 import {useLoadCustomers} from "src/hooks/useLoadCustomers";
 import {useLoadFilters} from "src/hooks/useLoadFilters";
 import {useLoadAllCustomersCount} from "src/hooks/useLoadAllCustomersCount";
-import type {GroupItem} from "src/types/customerTypes";
+import type {GroupItem, KeyValueData} from "src/types/customerTypes";
 import {Table} from "./components/Table";
 import {setActualPage, setChild} from "./customerSlice";
 
@@ -108,10 +108,28 @@ export const CustomerPage = () => {
         dispatch(setActualPage(value))
     }, [dispatch])
 
+    const currentFilterTopData = useMemo(() => {
+        let topData: KeyValueData[] = []
+        const filterValues = filter?.split('/')
+        if (filterValues) {
+            const lastFilterValue = filterValues[filterValues.length - 1]
+            if (lastFilterValue !== '' && lastFilterValue !== 'others') {
+                topData = filters[lastFilterValue] ? filters[lastFilterValue].top : []
+            }
+        }
+
+        return topData
+    }, [filter, filters])
+
     return (
         <>
             <h3>ScoreaTest - Zoznam zákazníkov</h3>
-            <DataInfo filter={filter} customerCount={customerCount} />
+            <DataInfo
+                filter={filter}
+                customerCount={customerCount}
+                topData={currentFilterTopData}
+                onPressDataInfoLink={handlePressFilter}
+            />
             <div className={'content'}>
                 {filters &&
                     <Filter
