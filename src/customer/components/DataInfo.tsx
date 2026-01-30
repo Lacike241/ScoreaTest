@@ -1,6 +1,7 @@
 import React from "react";
-import type {KeyValueData} from "src/types/customerTypes.ts";
-import {DataInfoLink} from "src/customer/components/DataInfoLink.tsx";
+
+import {DataInfoLink} from "src/customer/components/DataInfoLink";
+import type {KeyValueData} from "src/types/customerTypes";
 
 interface Props {
     customerCount?: number
